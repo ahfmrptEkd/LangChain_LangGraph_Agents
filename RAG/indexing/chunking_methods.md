@@ -1,0 +1,509 @@
+# 5가지 Chunking 방법 완전 정리
+
+## 📋 개요
+
+RAG 시스템에서 문서 분할(Chunking)은 성능을 좌우하는 핵심 요소입니다. 단순한 문자 분할부터 AI 에이전트가 수행하는 지능적 분할까지, 5가지 레벨로 나누어 설명합니다.
+
+## 🔄 Chunking 방법 비교표
+
+| 레벨 | 방법 | 복잡도 | 품질 | 속도 | 비용 | 적용 분야 |
+|------|------|---------|------|------|------|-----------|
+| 1 | Character Split | ⭐ | ⭐ | ⭐⭐⭐⭐⭐ | 💰 | 프로토타입 |
+| 2 | Recursive Character Split | ⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ | 💰 | 일반 텍스트 |
+| 3 | Document Specific Splitting | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ | 💰💰 | 구조화된 문서 |
+| 4 | Semantic Splitting | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐ | 💰💰💰 | 고품질 RAG |
+| 5 | Agentic Splitting | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐ | 💰💰💰💰 | 전문 분야 |
+
+---
+
+## 📝 Level 1: Character Split
+
+### 특징
+- 가장 기본적인 문자 단위 분할
+- 고정된 문자 수로 텍스트 분할
+- 문맥 고려 없음
+
+### 코드 예시
+```python
+from langchain.text_splitter import CharacterTextSplitter
+
+def character_split(text):
+    """기본 문자 분할"""
+    splitter = CharacterTextSplitter(
+        chunk_size=1000,     # 1000자 단위로 분할
+        chunk_overlap=100,   # 100자 중복
+        separator="\n"       # 줄바꿈 기준
+    )
+    chunks = splitter.split_text(text)
+    return chunks
+
+# 사용 예시
+text = "긴 텍스트 내용..."
+chunks = character_split(text)
+print(f"총 {len(chunks)}개 청크 생성")
+```
+
+### 장점 ✅
+- 구현이 매우 간단
+- 처리 속도가 빠름
+- 비용이 저렴
+
+### 단점 ❌
+- 문맥 무시로 의미가 깨질 수 있음
+- 문장 중간에서 분할 가능
+- 품질이 낮음
+
+### 적용 분야
+- 빠른 프로토타입 개발
+- 대용량 텍스트 전처리
+- 단순한 정보 검색
+
+---
+
+## 🔄 Level 2: Recursive Character Split
+
+### 특징
+- 계층적 구분자 사용
+- 문단 → 문장 → 단어 순으로 분할
+- 문맥 보존 개선
+
+### 코드 예시
+```python
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+def recursive_character_split(text):
+    """재귀적 문자 분할"""
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1000,
+        chunk_overlap=200,
+        separators=["\n\n", "\n", " ", ""]  # 우선순위 구분자
+    )
+    chunks = splitter.split_text(text)
+    return chunks
+
+# 향상된 설정
+def advanced_recursive_split(text):
+    """고급 재귀적 분할"""
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1500,
+        chunk_overlap=300,
+        separators=[
+            "\n\n",    # 문단 구분
+            "\n",      # 줄 구분
+            ". ",      # 문장 구분
+            "! ",      # 감탄문 구분
+            "? ",      # 의문문 구분
+            " ",       # 단어 구분
+            ""         # 문자 구분
+        ]
+    )
+    return splitter.split_text(text)
+```
+
+### 장점 ✅
+- 문맥 보존이 개선됨
+- 유연한 구분자 설정
+- 대부분의 경우 적합
+
+### 단점 ❌
+- 여전히 의미 기반 분할 아님
+- 문서 구조 고려 부족
+- 복잡한 형식에 한계
+
+### 적용 분야
+- 일반적인 RAG 시스템
+- 블로그, 뉴스 기사
+- 책, 논문 등 일반 문서
+
+---
+
+## 📊 Level 3: Document Specific Splitting
+
+### 특징
+- 문서 형식별 특화 분할
+- 구조 정보 활용
+- 메타데이터 보존
+
+### 코드 예시
+```python
+from langchain.text_splitter import (
+    PythonCodeTextSplitter,
+    MarkdownTextSplitter,
+    HTMLHeaderTextSplitter
+)
+
+def document_specific_split(content, doc_type):
+    """문서 형식별 분할"""
+    
+    if doc_type == "python":
+        splitter = PythonCodeTextSplitter(
+            chunk_size=1000,
+            chunk_overlap=100
+        )
+    elif doc_type == "markdown":
+        splitter = MarkdownTextSplitter(
+            chunk_size=1000,
+            chunk_overlap=100
+        )
+    elif doc_type == "html":
+        splitter = HTMLHeaderTextSplitter(
+            headers_to_split_on=[
+                ("h1", "Header 1"),
+                ("h2", "Header 2"),
+                ("h3", "Header 3")
+            ]
+        )
+    else:
+        # 기본 재귀적 분할
+        splitter = RecursiveCharacterTextSplitter(
+            chunk_size=1000,
+            chunk_overlap=100
+        )
+    
+    return splitter.split_text(content)
+
+# Markdown 특화 예시
+def markdown_split_with_metadata(md_content):
+    """메타데이터 보존하는 마크다운 분할"""
+    headers_to_split_on = [
+        ("# ", "Header 1"),
+        ("## ", "Header 2"),
+        ("### ", "Header 3"),
+    ]
+    
+    splitter = MarkdownTextSplitter.from_tiktoken_encoder(
+        chunk_size=1000,
+        chunk_overlap=100,
+        headers_to_split_on=headers_to_split_on
+    )
+    
+    return splitter.split_text(md_content)
+```
+
+### 장점 ✅
+- 문서 구조 정보 활용
+- 메타데이터 보존
+- 형식별 최적화
+
+### 단점 ❌
+- 문서 타입별 설정 필요
+- 복잡한 구현
+- 의미 기반 분할 아님
+
+### 적용 분야
+- 코드 문서화
+- 기술 문서
+- 구조화된 웹 페이지
+
+---
+
+## 🧠 Level 4: Semantic Splitting (With Embeddings)
+
+### 특징
+- 임베딩 기반 의미 분할
+- 의미적 유사성 고려
+- 문맥 보존 극대화
+
+### 코드 예시
+```python
+from langchain.text_splitter import SemanticChunker
+from langchain_openai import OpenAIEmbeddings
+import numpy as np
+
+def semantic_split(text):
+    """의미적 분할"""
+    embeddings = OpenAIEmbeddings()
+    
+    splitter = SemanticChunker(
+        embeddings=embeddings,
+        breakpoint_threshold_type="percentile",  # 분할 임계값 방식
+        breakpoint_threshold_amount=95           # 95% 임계값
+    )
+    
+    chunks = splitter.split_text(text)
+    return chunks
+
+def custom_semantic_split(text, threshold=0.7):
+    """커스텀 의미적 분할"""
+    embeddings = OpenAIEmbeddings()
+    
+    # 문장 단위로 분할
+    sentences = text.split('. ')
+    
+    # 각 문장 임베딩 생성
+    sentence_embeddings = embeddings.embed_documents(sentences)
+    
+    chunks = []
+    current_chunk = [sentences[0]]
+    
+    for i in range(1, len(sentences)):
+        # 현재 청크와 다음 문장의 유사도 계산
+        current_embedding = np.mean([sentence_embeddings[j] for j in range(len(current_chunk))], axis=0)
+        next_embedding = sentence_embeddings[i]
+        
+        similarity = np.dot(current_embedding, next_embedding) / (
+            np.linalg.norm(current_embedding) * np.linalg.norm(next_embedding)
+        )
+        
+        if similarity > threshold:
+            current_chunk.append(sentences[i])
+        else:
+            # 새로운 청크 시작
+            chunks.append('. '.join(current_chunk))
+            current_chunk = [sentences[i]]
+    
+    # 마지막 청크 추가
+    chunks.append('. '.join(current_chunk))
+    
+    return chunks
+```
+
+### 장점 ✅
+- 의미 기반 분할
+- 문맥 보존 우수
+- 검색 품질 향상
+
+### 단점 ❌
+- 높은 계산 비용
+- 임베딩 생성 시간 소요
+- 복잡한 구현
+
+### 적용 분야
+- 고품질 RAG 시스템
+- 전문 지식 검색
+- 정확성이 중요한 분야
+
+---
+
+## 🤖 Level 5: Agentic Splitting
+
+### 특징
+- AI 에이전트가 분할 결정
+- 문서 내용 이해 후 분할
+- 최고 수준의 지능적 분할
+
+### 코드 예시
+```python
+from langchain.agents import initialize_agent
+from langchain.tools import Tool
+from langchain_openai import ChatOpenAI
+from langchain.prompts import PromptTemplate
+
+def agentic_split(text):
+    """에이전트 기반 분할"""
+    
+    llm = ChatOpenAI(model="gpt-4", temperature=0)
+    
+    # 분할 프롬프트
+    splitting_prompt = PromptTemplate(
+        input_variables=["text"],
+        template="""
+        다음 텍스트를 의미적으로 일관된 청크로 분할하세요.
+        각 청크는 완전한 개념이나 아이디어를 포함해야 합니다.
+        
+        규칙:
+        1. 각 청크는 500-1500 단어 사이
+        2. 문맥상 연관된 내용은 같은 청크에 포함
+        3. 새로운 주제나 섹션은 새로운 청크로 분할
+        4. 각 청크에 간단한 제목 부여
+        
+        텍스트:
+        {text}
+        
+        결과를 다음 형식으로 출력하세요:
+        [CHUNK_1]
+        제목: 
+        내용: 
+        [CHUNK_2]
+        제목: 
+        내용: 
+        ...
+        """
+    )
+    
+    # 에이전트 실행
+    chain = splitting_prompt | llm
+    result = chain.invoke({"text": text})
+    
+    # 결과 파싱
+    chunks = parse_agentic_result(result.content)
+    return chunks
+
+def parse_agentic_result(result):
+    """에이전트 결과 파싱"""
+    chunks = []
+    current_chunk = {}
+    
+    lines = result.split('\n')
+    for line in lines:
+        line = line.strip()
+        if line.startswith('[CHUNK_'):
+            if current_chunk:
+                chunks.append(current_chunk)
+            current_chunk = {}
+        elif line.startswith('제목:'):
+            current_chunk['title'] = line.replace('제목:', '').strip()
+        elif line.startswith('내용:'):
+            current_chunk['content'] = line.replace('내용:', '').strip()
+        elif line and 'content' in current_chunk:
+            current_chunk['content'] += ' ' + line
+    
+    if current_chunk:
+        chunks.append(current_chunk)
+    
+    return chunks
+
+def advanced_agentic_split(text, domain="general"):
+    """도메인별 에이전트 분할"""
+    
+    domain_prompts = {
+        "technical": "기술 문서의 특성을 고려하여 개념별로 분할",
+        "legal": "법률 문서의 조항과 규정을 고려하여 분할",
+        "medical": "의료 정보의 연관성을 고려하여 분할",
+        "general": "일반적인 텍스트 분할 규칙 적용"
+    }
+    
+    specific_instruction = domain_prompts.get(domain, domain_prompts["general"])
+    
+    # 도메인별 특화 프롬프트 생성
+    # ... (구현 생략)
+    
+    return chunks
+```
+
+### 장점 ✅
+- 최고 수준의 지능적 분할
+- 도메인별 특화 가능
+- 문서 내용 완전 이해
+
+### 단점 ❌
+- 매우 높은 비용
+- 처리 시간 오래 걸림
+- 복잡한 구현
+
+### 적용 분야
+- 전문 지식 시스템
+- 고부가가치 컨텐츠
+- 정밀 분석이 필요한 분야
+
+---
+
+## 🎯 선택 가이드
+
+### 📊 상황별 권장사항
+
+#### 빠른 프로토타입 개발
+```python
+# Level 1: Character Split
+splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+```
+
+#### 일반적인 RAG 시스템
+```python
+# Level 2: Recursive Character Split
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=1000, 
+    chunk_overlap=200,
+    separators=["\n\n", "\n", ". ", " ", ""]
+)
+```
+
+#### 구조화된 문서 처리
+```python
+# Level 3: Document Specific Splitting
+splitter = MarkdownTextSplitter(chunk_size=1000, chunk_overlap=100)
+```
+
+#### 고품질 검색 시스템
+```python
+# Level 4: Semantic Splitting
+splitter = SemanticChunker(embeddings=OpenAIEmbeddings())
+```
+
+#### 전문 분야 시스템
+```python
+# Level 5: Agentic Splitting
+chunks = agentic_split(text)
+```
+
+## 🔧 실전 팁
+
+### 1. 하이브리드 접근법
+```python
+def hybrid_chunking(text, doc_type="general"):
+    """상황에 맞는 하이브리드 분할"""
+    
+    # 1단계: 문서 형식별 분할
+    if doc_type == "markdown":
+        primary_chunks = MarkdownTextSplitter().split_text(text)
+    else:
+        primary_chunks = RecursiveCharacterTextSplitter().split_text(text)
+    
+    # 2단계: 긴 청크는 의미적 분할
+    final_chunks = []
+    for chunk in primary_chunks:
+        if len(chunk) > 2000:  # 너무 긴 청크
+            semantic_chunks = semantic_split(chunk)
+            final_chunks.extend(semantic_chunks)
+        else:
+            final_chunks.append(chunk)
+    
+    return final_chunks
+```
+
+### 2. 성능 최적화
+```python
+def optimized_chunking(text, quality_level="medium"):
+    """성능과 품질의 균형"""
+    
+    if quality_level == "fast":
+        return CharacterTextSplitter().split_text(text)
+    elif quality_level == "medium":
+        return RecursiveCharacterTextSplitter().split_text(text)
+    elif quality_level == "high":
+        return semantic_split(text)
+    else:  # premium
+        return agentic_split(text)
+```
+
+### 3. 비용 관리
+```python
+def cost_effective_chunking(text, budget="low"):
+    """비용을 고려한 분할"""
+    
+    budget_strategies = {
+        "low": CharacterTextSplitter(),
+        "medium": RecursiveCharacterTextSplitter(),
+        "high": SemanticChunker(embeddings=OpenAIEmbeddings())
+    }
+    
+    splitter = budget_strategies.get(budget, budget_strategies["low"])
+    return splitter.split_text(text)
+```
+
+## 📈 성능 벤치마크
+
+### 처리 시간 비교 (1MB 텍스트 기준)
+- Level 1: ~0.1초
+- Level 2: ~0.5초
+- Level 3: ~1.0초
+- Level 4: ~30초
+- Level 5: ~300초
+
+### 비용 비교 (1MB 텍스트 기준)
+- Level 1: 무료
+- Level 2: 무료
+- Level 3: 무료
+- Level 4: ~$0.10
+- Level 5: ~$5.00
+
+## 🎬 결론
+
+Chunking 방법 선택은 **용도, 예산, 시간**을 모두 고려해야 합니다:
+
+1. **프로토타입**: Level 1-2 사용
+2. **프로덕션**: Level 2-3 권장
+3. **고품질**: Level 4-5 고려
+4. **하이브리드**: 상황에 맞게 조합
+
+가장 중요한 것은 **실제 사용 사례에 맞는 방법을 선택**하는 것입니다. 항상 작은 규모로 테스트한 후 확장해야합니다.
