@@ -9,3 +9,8 @@ sources
 - 5. step-back : https://arxiv.org/pdf/2310.06117
 - 6. HyDE : https://github.com/langchain-ai/langchain/blob/master/cookbook/hypothetical_document_embeddings.ipynb
 - 7. HyDE : https://arxiv.org/abs/2212.10496
+
+# retrieval
+- 1. re-rank (cohere api) : https://python.langchain.com/docs/integrations/retrievers/cohere-reranker/
+- 2. CRAG LC Blog (Corrected RAG) w/ LangGraph : https://langchain-ai.github.io/langgraph/tutorials/rag/langgraph_crag/
+- 3. CRAG : https://arxiv.org/pdf/2401.15884
