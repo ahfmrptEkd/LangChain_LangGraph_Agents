@@ -9,3 +9,6 @@ sources
 - 5. step-back : https://arxiv.org/pdf/2310.06117
 - 6. HyDE : https://github.com/langchain-ai/langchain/blob/master/cookbook/hypothetical_document_embeddings.ipynb
 - 7. HyDE : https://arxiv.org/abs/2212.10496
+
+# Routing
+- 1. logical & sementic route : https://python.langchain.com/docs/how_to/routing/
