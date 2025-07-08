@@ -1,4 +1,4 @@
-- source from https://github.com/langchain-ai/rag-from-scratch & https://github.com/langchain-ai/langgraph/tree/main/examples/rag
+**source from https://github.com/langchain-ai/rag-from-scratch & https://github.com/langchain-ai/langgraph/tree/main/examples/rag**
 
 # query-translation
 - 1. RAG fusion : https://github.com/langchain-ai/langchain/blob/master/cookbook/rag_fusion.ipynb?ref=blog.langchain.dev
