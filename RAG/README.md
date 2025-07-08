@@ -10,5 +10,10 @@ sources
 - 6. HyDE : https://github.com/langchain-ai/langchain/blob/master/cookbook/hypothetical_document_embeddings.ipynb
 - 7. HyDE : https://arxiv.org/abs/2212.10496
 
+# query-construction 
+- 1. Query Construction (blog) : https://blog.langchain.com/query-construction/
+- 2. LangChain another blog : https://blog.langchain.com/enhancing-rag-based-applications-accuracy-by-constructing-and-leveraging-knowledge-graphs/
+- 3. self-query tutorial(official LC) : https://python.langchain.com/docs/how_to/self_query/
+
 # Routing
 - 1. logical & sementic route : https://python.langchain.com/docs/how_to/routing/
