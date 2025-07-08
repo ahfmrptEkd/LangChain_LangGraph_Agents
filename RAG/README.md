@@ -17,3 +17,12 @@ sources
 
 # Routing
 - 1. logical & sementic route : https://python.langchain.com/docs/how_to/routing/
+
+# Indexing
+- 1. chunking : https://www.youtube.com/watch?v=8OJC21T2SL4&ab_channel=GregKamradt
+- 2. multi representation LC blog (1) : https://blog.langchain.com/semi-structured-multi-modal-rag/
+- 3. multi representation LC document (2) : https://python.langchain.com/docs/how_to/multi_vector/
+- 4. multi representation scholar paper (3) : https://arxiv.org/abs/2312.06648
+- 5. RAPTOR scholar paper : https://arxiv.org/pdf/2401.18059
+- 6. ColBERT : https://arxiv.org/abs/2004.12832
+- 7. ColBERT repo : https://arxiv.org/abs/2004.12832
