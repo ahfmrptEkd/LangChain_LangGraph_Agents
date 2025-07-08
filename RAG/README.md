@@ -26,3 +26,8 @@ sources
 - 5. RAPTOR scholar paper : https://arxiv.org/pdf/2401.18059
 - 6. ColBERT : https://arxiv.org/abs/2004.12832
 - 7. ColBERT repo : https://arxiv.org/abs/2004.12832
+
+# retrieval
+- 1. re-rank (cohere api) : https://python.langchain.com/docs/integrations/retrievers/cohere-reranker/
+- 2. CRAG LC Blog (Corrected RAG) w/ LangGraph : https://langchain-ai.github.io/langgraph/tutorials/rag/langgraph_crag/
+- 3. CRAG : https://arxiv.org/pdf/2401.15884
