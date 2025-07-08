@@ -1,0 +1,170 @@
+# LangChain Core Components Guide
+
+## Overview
+Query Translation과 RAG 구현에서 자주 사용되는 LangChain의 핵심 컴포넌트들에 대한 종합 가이드입니다. 실제 사용 예시와 함께 각 컴포넌트의 역할과 활용법을 다룹니다.
+
+## 1. 🔗 Data Passing & Flow
+
+### `RunnablePassthrough`
+입력 데이터를 변경하지 않고 그대로 출력으로 전달하는 컴포넌트입니다. 단순한 파이프라인에서 원본 입력을 유지하며 다음 단계로 전달할 때 유용합니다.
+
+**주요 특징:**
+- **단순성**: 입력값을 그대로 반환하여 파이프라인 구조를 명확하게 만듭니다.
+- **활용**: 주로 `{"context": retriever, "question": RunnablePassthrough()}`와 같이, 검색된 `context`와 원본 `question`을 함께 프롬프트에 전달할 때 사용됩니다.
+
+**사용 예시:**
+```python
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.output_parsers import StrOutputParser
+
+# 단순한 RAG 체인
+simple_rag_chain = (
+    {"context": retriever | format_docs, "question": RunnablePassthrough()}
+    | prompt
+    | llm
+    | StrOutputParser()
+)
+
+# 사용 시 "What is task decomposition?" 문자열이 question으로 그대로 전달됨
+result = simple_rag_chain.invoke("What is task decomposition?")
+```
+
+### `itemgetter`
+복잡한 데이터 구조(주로 딕셔너리)에서 특정 키의 값을 추출하는 파이썬 내장 함수입니다. LangChain 파이프라인과 자연스럽게 통합됩니다.
+
+**주요 특징:**
+- **값 추출**: `itemgetter("key")`는 `lambda x: x["key"]`와 동일한 역할을 합니다.
+- **복잡한 파이프라인**: 입력이 딕셔너리 형태일 때 `RunnablePassthrough`의 한계를 극복하고 특정 값을 정확히 전달할 수 있습니다.
+
+**사용 예시:**
+```python
+from operator import itemgetter
+
+# Multi-Query RAG와 같이 입력이 {"question": "..."} 형태일 때
+final_rag_chain = (
+    {"context": retrieval_chain, "question": itemgetter("question")}
+    | prompt | llm | StrOutputParser()
+)
+
+# itemgetter가 딕셔너리에서 "question" 키의 값을 추출하여 전달
+result = final_rag_chain.invoke({"question": "What is task decomposition?"})
+```
+
+### `RunnablePassthrough` vs `itemgetter`
+
+| 구분 | `RunnablePassthrough` | `itemgetter` |
+|---|---|---|
+| **입력 형태** | 주로 문자열 (String) | 주로 딕셔너리 (Dict) |
+| **역할** | 입력 전체를 그대로 전달 | 딕셔너리에서 특정 값 추출 |
+| **주 사용처** | `chain.invoke("query")` | `chain.invoke({"key": "value"})` |
+| **주의사항** | 입력이 딕셔너리일 때 의도치 않게 전체 딕셔너리를 전달할 수 있음 | |
+
+## 2. 🔄 Document Serialization: `dumps` & `loads`
+
+Document 객체를 문자열로 변환(`dumps`)하거나 다시 Document 객체로 복원(`loads`)하는 기능입니다. 객체는 메모리 주소가 달라 직접 비교가 어렵기 때문에, 내용을 기준으로 비교해야 할 때 사용합니다.
+
+**주요 특징:**
+- **`dumps`**: Document 객체 → 고유한 문자열로 변환
+- **`loads`**: 문자열 → 원본 Document 객체로 복원
+
+**핵심 사용 사례: Multi-Query RAG에서 중복 문서 제거**
+```python
+from langchain.load import dumps, loads
+
+def get_unique_union(documents: list[list]):
+    """여러 쿼리 결과에서 중복된 문서를 효과적으로 제거합니다."""
+    # 1. 모든 Document를 비교 가능한 문자열로 변환
+    flattened_docs = [dumps(doc) for sublist in documents for doc in sublist]
+    
+    # 2. set()을 사용해 고유한 문자열만 남김
+    unique_docs_str = list(set(flattened_docs))
+    
+    # 3. 다시 Document 객체로 복원
+    return [loads(doc_str) for doc_str in unique_docs_str]
+```
+
+## 3. 🔍 Retriever Methods: `invoke` vs `get_relevant_documents`
+
+`MultiVectorRetriever`와 같은 Retriever 클래스에서 문서를 검색하는 두 가지 주요 메소드입니다.
+
+### 메소드 비교
+
+| 구분 | `get_relevant_documents` (레거시) | `invoke` (현대적 방식) |
+|---|---|---|
+| **매개변수 전달** | 호출 시 `retriever.get_relevant_documents(query, k=3)`처럼 직접 전달 | 생성 시 `search_kwargs={"k": 3}`로 미리 지정 |
+| **쿼리 형식** | 문자열 + 추가 매개변수 | 문자열만 (`retriever.invoke(query)`) |
+| **장점** | 호출마다 다른 매개변수 사용 가능 (유연성) | 설정과 사용이 분리되어 코드가 깔끔하고, LCEL 파이프라인과 호환성이 높음 |
+| **권장사항** | **`invoke`** 사용을 권장. 일관성, 가독성, 파이프라인 통합에 유리 |
+
+### 사용 예시
+
+**`invoke` (권장)**
+```python
+# 1. 생성 단계에서 검색 옵션 설정
+retriever = MultiVectorRetriever(
+    vectorstore=vectorstore,
+    byte_store=store,
+    id_key="doc_id",
+    search_kwargs={"k": 1}  # 검색 결과 1개로 고정
+)
+
+# 2. 사용 단계에서는 쿼리만 전달
+results = retriever.invoke("에이전트의 메모리 구조")
+```
+
+**`get_relevant_documents`**
+```python
+# 호출할 때마다 검색 옵션 지정
+docs1 = retriever.get_relevant_documents("쿼리1", n_results=1)
+docs2 = retriever.get_relevant_documents("쿼리2", n_results=5)
+```
+
+## 4. 🎯 Few-Shot Prompting: `FewShotChatMessagePromptTemplate`
+
+AI 모델에게 몇 가지 예시(Few-shot)를 제공하여 원하는 출력 형식을 명확히 알려주는 기법입니다. 복잡한 태스크나 특정 스타일의 응답이 필요할 때 효과적입니다.
+
+### 구조 및 실제 예시 (Step-back Prompting)
+
+```python
+from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
+
+# 1. 예시 데이터 정의 (구체적 질문 -> 일반적 질문)
+examples = [
+    {"input": "Could the members of The Police perform lawful arrests?", "output": "what can the members of The Police do?"},
+    {"input": "Jan Sindel's was born in what country?", "output": "what is Jan Sindel's personal history?"},
+]
+
+# 2. 각 예시의 형식을 정의하는 템플릿
+example_prompt = ChatPromptTemplate.from_messages([
+    ("human", "{input}"),
+    ("ai", "{output}"),
+])
+
+# 3. Few-Shot 템플릿 생성
+few_shot_prompt = FewShotChatMessagePromptTemplate(
+    example_prompt=example_prompt,
+    examples=examples,
+)
+
+# 4. 최종 프롬프트에 시스템 메시지, Few-Shot 예시, 사용자 질문을 결합
+final_prompt = ChatPromptTemplate.from_messages([
+    ("system", "You are an expert at paraphrasing questions. Here are a few examples:"),
+    few_shot_prompt,  # 예시들이 여기에 삽입됨
+    ("user", "{question}"),
+])
+
+# 프롬프트 체인과 연결하여 사용
+prompt_chain = final_prompt | llm
+```
+
+## 📝 Best Practices & Summary
+
+| 컴포넌트 | 주요 기능 | 권장 사용처 |
+|---|---|---|
+| **`RunnablePassthrough`** | 데이터 그대로 전달 | 단순 RAG 체인, `invoke`에 문자열을 직접 전달할 때 |
+| **`itemgetter`** | 딕셔너리에서 값 추출 | 복잡한 RAG 체인, `invoke`에 딕셔너리를 전달할 때 |
+| **`dumps` / `loads`** | Document 직렬화/역직렬화 | Multi-Query RAG에서 검색 결과의 중복을 제거할 때 |
+| **`invoke`** | Retriever 실행 | LCEL 파이프라인과의 통합, 일관된 검색 설정이 필요할 때 |
+| **`FewShotChatMessagePromptTemplate`** | 프롬프트에 예시 제공 | 모델의 출력 형식을 제어하거나 복잡한 추론을 유도할 때 |
+
+이 컴포넌트들을 올바르게 이해하고 사용하면 효율적이고 안정적인 RAG 시스템을 구축할 수 있습니다.
