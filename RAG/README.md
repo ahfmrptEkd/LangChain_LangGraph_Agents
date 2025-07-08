@@ -1,3 +1,7 @@
+![rag overall](../src/imgs/rag.png)
+(https://github.com/langchain-ai/rag-from-scratch)
+
+
 **source from https://github.com/langchain-ai/rag-from-scratch & https://github.com/langchain-ai/langgraph/tree/main/examples/rag**
 
 # query-translation
