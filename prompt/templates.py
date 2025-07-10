@@ -13,12 +13,11 @@
 from langchain_core.prompts import (
     ChatPromptTemplate,
     FewShotChatMessagePromptTemplate,
-    PromptTemplate,
 )
 from langchain_core.example_selectors import SemanticSimilarityExampleSelector
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
-from typing import List, Dict, Any
+from typing import List, Dict
 
 
 # --- 1. 기본 프롬프트 템플릿 ---

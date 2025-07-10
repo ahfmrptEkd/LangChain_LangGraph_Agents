@@ -6,7 +6,6 @@ Tree of Thought (ToT) 프롬프트 템플릿 사용 예제 (리팩토링 버전)
 """
 
 import os
-import json
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import JsonOutputParser
