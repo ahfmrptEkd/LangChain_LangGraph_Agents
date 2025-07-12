@@ -18,6 +18,18 @@
 -   **Routing**: Logical and Semantic Routing
 -   **Retrieval**: Reranking, Self-RAG, CRAG, Adaptive RAG
 
+### 2. 프롬프트 기법 정리 및 템플릿화
+**프롬프트 엔지니어링** (`prompt/` 디렉토리):
+-   **Basic Prompting**: Zero-shot Prompting, Few-shot Prompting
+-   **고급 추론**: Chain of Thought (CoT), Tree of Thought (ToT)
+-   **자기 개선**: Self-Consistency, Self-Reflection
+
+### 3. Chain & Agentic application 구현
+**에이전트 시스템 및 고급 NLP** (`agent/` 디렉토리):
+-   **Agent 시스템**: React Agent, Chatbot, Conversational RAG, Memory saved chatbot & agent
+-   **LLM 기반 NLP 기법**: Text classification, Text extraction, Text summarziation
+-   **상태 관리**: LangGraph 기반 워크플로우
+
 각 기법에 대한 상세한 설명과 소스 코드는 해당 하위 폴더의 `README.md` 파일에서 확인할 수 있습니다.
 
 ### 2. 미래 확장 계획 (Future Scope)
@@ -35,4 +47,6 @@
 ## 📂 저장소 구조
 
 -   **/RAG**: 이 프로젝트의 핵심으로, 다양한 고급 RAG 기법들의 구현 코드와 상세한 `README.md` 문서가 포함되어 있습니다.
+-   **/prompt**: 프롬프트 엔지니어링 기법들(Basic, CoT, ToT, Self-Consistency, Self-Reflection)의 재사용 가능한 템플릿과 실행 예제를 포함합니다.
+-   **/agent**: 에이전트 시스템, 대화형 RAG, 텍스트 분류, 문서 요약, 정보 추출 등 고급 NLP 기법들의 구현 코드를 포함합니다.
 -   **/src**: 이미지 등 프로젝트에 사용되는 소스 파일들을 포함합니다.
