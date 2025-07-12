@@ -145,17 +145,19 @@ agent = create_react_agent(
 ### 🔧 LangChain & LangGraph 공식 문서
 - [LangChain 공식 문서](https://docs.langchain.com/)
 - [LangGraph 공식 문서](https://langchain-ai.github.io/langgraph/)
-- [LangChain Agent 가이드](https://docs.langchain.com/docs/use-cases/agent)
+- [LangChain Agent 가이드](https://python.langchain.com/docs/tutorials/agents)
+- [LangChain classify](https://python.langchain.com/docs/tutorials/classification/)
+- [LangChain summarization with map-reduce](https://python.langchain.com/docs/tutorials/summarization/)
 
 ### 🤖 Agent 시스템 관련
 - [ReAct 논문](https://arxiv.org/abs/2210.03629) - Reasoning and Acting in Language Models
 - [Tool Learning Survey](https://arxiv.org/abs/2304.08354) - Tool Learning with Foundation Models
-- [LangChain Agent 비교](https://docs.langchain.com/docs/use-cases/agent) - 다양한 에이전트 타입 비교
+- [LangChain Agent 비교](https://langchain-ai.github.io/langgraph/concepts/agentic_concepts/) - 다양한 에이전트 타입 비교
 
 ### 🔍 RAG 및 검색 기법
 - [RAG 논문](https://arxiv.org/abs/2005.11401) - Retrieval-Augmented Generation
-- [Conversational RAG](https://docs.langchain.com/docs/use-cases/question-answering) - 대화형 검색 생성
-- [Vector Store 비교](https://docs.langchain.com/docs/modules/data-connection/vectorstores) - 벡터 스토어 선택 가이드
+- [Conversational RAG](https://python.langchain.com/docs/tutorials/qa_chat_history/#chains) - 대화형 검색 생성
+- [Vector Store 비교](https://python.langchain.com/docs/integrations/vectorstores/) - 벡터 스토어 선택 가이드
 
 ### 📊 구조화된 출력 및 추출
 - [Pydantic 공식 문서](https://docs.pydantic.dev/) - 데이터 검증 및 스키마
@@ -163,7 +165,7 @@ agent = create_react_agent(
 - [OpenAI Function Calling](https://platform.openai.com/docs/guides/function-calling) - OpenAI 함수 호출
 
 ### 🔄 비동기 및 병렬 처리
-- [LangChain 비동기 가이드](https://docs.langchain.com/docs/guides/async) - 비동기 처리 패턴
+- [LangChain 비동기 가이드](https://python.langchain.com/docs/how_to/custom_tools/) - 비동기 툴 처리 패턴
 - [Python asyncio 공식 문서](https://docs.python.org/3/library/asyncio.html) - 비동기 프로그래밍
 
 ---
