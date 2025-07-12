@@ -3,9 +3,9 @@
 
 ## 🎯 About This Directory
 
-이 디렉토리는 **고급 RAG(Retrieval-Augmented Generation) 기법**들의 Python 구현 예제를 포함하고 있습니다. 표준 RAG 파이프라인의 각 단계를 개선하고, 더 정확하고 신뢰성 높은 답변을 생성하기 위한 다양한 최신 방법론들을 체계적으로 정리하는 것을 목표로 합니다.
+이 디렉토리는 **고급 RAG(Retrieval-Augmented Generation) 기법**들의 Python 구현 예제를 포함하고 있습니다. 표준 RAG 파이프라인의 각 단계를 개선하고, 더 정확하고 신뢰성 높은 답변을 생성하기 위한 다양한 최신 방법론들을 체계적으로 정리하는 것을 목표로 한다.
 
-각 하위 폴더는 RAG의 특정 단계(예: `Indexing`, `Query Translation`, `Retrieval`)에 해당하며, 해당 단계에서 사용할 수 있는 여러 기법들의 코드와 상세한 설명을 담은 `README.md` 파일을 포함합니다.
+각 하위 폴더는 RAG의 특정 단계(예: `Indexing`, `Query Translation`, `Retrieval`)에 해당하며, 해당 단계에서 사용할 수 있는 여러 기법들의 코드와 상세한 설명을 담은 `README.md` 파일을 포함되어있다.
 
 ---
 
