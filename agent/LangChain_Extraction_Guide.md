@@ -3,7 +3,7 @@
 
 ## 🚀 개요
 
-이 문서는 LangChain의 `ExtractionChain` 구현에서 사용된 핵심 개념들을 정리합니다. 
+이 문서는 LangChain의 `agent/extraction.py` 구현에서 사용된 핵심 개념들을 정리합니다. 
 
 ---
 
