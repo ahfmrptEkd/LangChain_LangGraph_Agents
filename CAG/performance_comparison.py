@@ -342,7 +342,6 @@ def main():
     print("🚀 Starting Comprehensive Caching Performance Comparison")
     print("=" * 80)
     
-    # Load environment variables
     load_dotenv()
     
     # Ensure the OpenAI API key is set
