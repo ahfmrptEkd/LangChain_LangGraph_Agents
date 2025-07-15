@@ -30,8 +30,10 @@ CAG/
 ├── caching.py                   # 캐시 구현 
 ├── cag_template.py              # 캐시 기반 리트리버 클래스
 ├── run_cag_example.py           # 리트리버 캐싱 + LLM 캐싱 = 하이브리드 캐싱 예제
-├── basic_cag_template.py         # 진짜 CAG 구현
-├── run_basic_cag_example.py      # 진짜 CAG 예제
+├── true_cag_template.py         # 진짜 CAG 구현
+├── run_true_cag_example.py      # 진짜 CAG 예제
+├── semantic_cache_template.py      # semantic 기반 CAG 구현
+├── run_semantic_cache_example.py      # semantic 기반 예제
 ├── performance_comparison.py    # 성능 비교 벤치마크 
 ├── research.md                  # CAG 연구 자료 
 ```
@@ -63,6 +65,10 @@ CAG/
 #### 🚀 **True CAG 구현** (새로 추가!)
 - `basic_cag_template.py`: **진짜 CAG 방식**을 구현합니다. 모든 지식을 모델 컨텍스트에 사전 로드하여 검색 단계를 완전히 제거합니다.
 - `run_basic_cag_example.py`: basic CAG 방식의 데모 스크립트입니다. 40배 빠른 응답과 기존 방식과의 성능 비교를 보여줍니다.
+
+#### 🧠 **Semantic Cache 구현**
+- `semantic_cache_template.py`: **시맨틱 캐싱 리트리버**를 구현합니다. FAISS 기반 벡터 유사도 검색으로 의미적으로 유사한 쿼리의 결과를 재사용합니다. L2 정규화 기반 코사인 유사도 계산, LRU 캐시 관리, 캐시 크기 제한 기능을 포함합니다.
+- `run_semantic_cache_example.py`: 시맨틱 캐싱 성능 테스트 스크립트입니다. 에펠탑 데이터로 유사도 threshold 설정, 캐시 히트/미스 동작, 캐시 크기 제한 및 LRU 제거 메커니즘을 실증합니다.
 
 #### 📊 **성능 분석 및 연구**
 - `performance_comparison.py`: 4가지 캐싱 전략의 성능을 올바르게 측정하는 종합 벤치마크 스크립트입니다. 각 쿼리를 반복 실행하여 실제 캐시 효과(Cache Miss vs Cache Hit)를 정확히 측정합니다.
@@ -161,6 +167,12 @@ python performance_comparison.py
 📈 개별 캐시 효과:
    💭 LLM 캐시: 74.9% 개선
    📚 리트리버 캐시: 90.9% 개선
+   
+🧠 Semantic Cache 효과:
+   📊 평균 응답시간: 1.764초
+   🎯 캐시 히트 성능: 23-39% 개선 (1.2-1.4초 vs 1.5-3.1초)
+   🔄 유사도 기반 매칭: 0.95+ threshold로 정확한 캐시 히트
+   💾 LRU 메모리 관리: 자동 캐시 크기 제한 및 최적화
 ```
 
 ### 사용 권장사항
@@ -168,7 +180,8 @@ python performance_comparison.py
 1. **🏆 최고 성능을 원한다면**: Full CAG (리트리버 + LLM 캐시)
 2. **📚 반복 쿼리가 많다면**: 리트리버 캐시 우선 적용
 3. **💭 안정적 성능을 원한다면**: LLM 캐시로 시작
-4. **🚀 궁극적 성능을 원한다면**: 진짜 CAG (Context Preloading) - 대규모 지식 베이스에서 40x 개선 효과 in 논문.
+4. **🧠 유사 질문 처리가 중요하다면**: Semantic Cache (유사도 기반 캐싱)
+5. **🚀 궁극적 성능을 원한다면**: 진짜 CAG (Context Preloading) - 대규모 지식 베이스에서 40x 개선 효과 in 논문.
 
 ### 진짜 CAG vs 리트리버 캐시 비교
 
