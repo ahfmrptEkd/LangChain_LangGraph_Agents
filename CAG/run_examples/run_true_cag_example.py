@@ -12,6 +12,7 @@ Key features demonstrated:
 """
 
 import os
+import sys
 import time
 from dotenv import load_dotenv
 from langchain_core.documents import Document
@@ -20,6 +21,9 @@ from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.document_loaders import WebBaseLoader
 import bs4
+
+# Add parent directory to path to import CAG modules
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Import our basic CAG implementation
 from true_cag_template import basicCagGenerator

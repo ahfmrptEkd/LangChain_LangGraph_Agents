@@ -1,6 +1,7 @@
 """Example of how to use the SemanticCachedRetriever."""
 
 import os
+import sys
 import time
 from dotenv import load_dotenv
 from langchain_community.vectorstores import FAISS
@@ -9,6 +10,9 @@ from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
+
+# Add parent directory to path to import CAG modules
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from semantic_cache_template import SemanticCachedRetriever
 
