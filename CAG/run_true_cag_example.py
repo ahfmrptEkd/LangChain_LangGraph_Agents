@@ -22,7 +22,7 @@ from langchain_community.document_loaders import WebBaseLoader
 import bs4
 
 # Import our basic CAG implementation
-from basic_cag_template import basicCagGenerator
+from true_cag_template import basicCagGenerator
 
 # Also import traditional approach for comparison
 from cag_template import CachedRetriever
@@ -71,7 +71,7 @@ def get_long_context_documents() -> list[Document]:
     Returns:
         List containing the long document for CAG testing.
     """
-    print(f"📚 Loading long context document (~9,411 tokens)")
+    print("📚 Loading long context document (~9,411 tokens)")
     
     # Load document from web
     docs = load_web_document()
