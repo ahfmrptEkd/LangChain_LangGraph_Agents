@@ -1,7 +1,7 @@
 """
-basic Cache-Augmented Generation (CAG) Example - Long Context Experiment
+True Cache-Augmented Generation (CAG) Example - Long Context Experiment
 
-This script demonstrates the basic CAG approach using a real-world long document
+This script demonstrates the True CAG approach using a real-world long document
 (~9,411 tokens) to test true CAG performance with substantial context.
 
 Key features demonstrated:

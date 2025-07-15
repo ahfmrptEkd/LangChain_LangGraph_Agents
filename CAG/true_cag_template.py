@@ -1,7 +1,7 @@
 """
-basic Cache-Augmented Generation (CAG) Implementation
+True Cache-Augmented Generation (CAG) Implementation
 
-This module implements the basic CAG approach where all knowledge is preloaded
+This module implements the True CAG approach where all knowledge is preloaded
 into the model's context window, eliminating the retrieval step entirely.
 
 Based on the research paper:
