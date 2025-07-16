@@ -15,8 +15,7 @@
 - [파일 구조](#파일-구조)
 - [주요 기능](#주요-기능)
 - [성능 비교 결과](#성능-비교-결과)
-- [템플릿 확장](#템플릿-확장)
-- [성능 최적화](#성능-최적화)
+- [템플릿 확장](#향후-고려사항-및-성능-최적화)
 - [🔬 주요 발견](#-주요-발견)
 - [실용적 가이드라인](#-실용적-가이드라인)
 - [장점](#장점과-단점)
@@ -201,9 +200,11 @@ python performance_comparison.py
 **결론**: 소규모 지식 베이스는 진짜 CAG, 대규모는 리트리버 캐시가 실용적
 
 
-## 템플릿 확장
+## 향후 고려사항 및 성능 최적화
 
-### 다양한 캐시 백엔드
+### 캐싱 전략
+
+**1. 다양한 캐시 백엔드**
 
 다른 캐시(예: Redis)를 사용하려면 `InMemoryCache`와 동일한 `get`, `set`, `clear` 메서드를 구현하는 새로운 캐시 클래스를 만들고 `CachedRetriever`에 전달하자.
 
@@ -224,7 +225,47 @@ class RedisCache(InMemoryCache):
         pass
 ```
 
-### 의미론적 캐싱
+**2. 다단계 캐싱**
+```python
+class MultiStageRAGCache:
+    def __init__(self):
+        self.l1_cache = InMemoryCache()      # 빠른 메모리 캐시
+        self.l2_cache = SQLiteCache("l2_cache.db")  # 지속적 캐시
+        self.semantic_cache = None           # 의미적 유사성 캐시
+    
+    def get_response(self, query):
+        # L1 캐시 (메모리)
+        if response := self.l1_cache.get(query):
+            return response
+        
+        # L2 캐시 (SQLite)
+        if response := self.l2_cache.get(query):
+            self.l1_cache.set(query, response)
+            return response
+        
+        # 의미적 캐시
+        if self.semantic_cache and (response := self.semantic_cache.get_similar(query)):
+            return response
+        
+        return None
+```
+
+**3. 캐시 워밍 및 사전 계산**
+```python
+def warm_cache_with_common_queries(cache, common_queries, llm):
+    """일반적인 쿼리로 캐시 사전 채우기"""
+    for query in common_queries:
+        if not cache.get(query):
+            response = llm.invoke(query)
+            cache.set(query, response)
+
+def precompute_embeddings(documents, cached_embedder):
+    """문서 임베딩 사전 계산"""
+    return [cached_embedder.embed_documents([doc.page_content]) 
+            for doc in documents]
+```
+
+**4. 의미론적 캐싱**
 
 더 고급 사용 사례의 경우, 정확한 매칭 대신 캐시 키(쿼리)에 대한 의미론적 검색을 수행하도록 `CachedRetriever`를 확장할 수 있다.
 
@@ -244,9 +285,9 @@ class SemanticCache(InMemoryCache):
         pass
 ```
 
-## 성능 최적화
+### 캐시 최적화
 
-### 캐시 크기 제한
+**1. 캐시 크기 제한**
 
 ```python
 from collections import OrderedDict
@@ -264,7 +305,7 @@ class LRUCache(InMemoryCache):
         self._cache[key] = value
 ```
 
-### 캐시 만료
+**2. 캐시 만료**
 
 ```python
 import time
@@ -283,6 +324,19 @@ class TTLCache(InMemoryCache):
                 del self._cache[key]
                 del self.timestamps[key]
         return None
+```
+
+**3. 모니터링 메트릭**
+
+```python
+class CacheMetrics:
+    def __init__(self):
+        self.hits = 0
+        self.misses = 0
+        self.total_requests = 0
+    
+    def get_hit_rate(self):
+        return self.hits / self.total_requests if self.total_requests > 0 else 0
 ```
 
 ## 🔬 주요 발견
@@ -404,5 +458,9 @@ Cache-Augmented Generation (CAG)은 RAG 시스템의 성능을 획기적으로 �
 
 ## Source
 - [Don’t Do RAG: When Cache-Augmented Generation is All You Need for Knowledge Tasks](https://arxiv.org/pdf/2412.15605)
+- [논문의 공식 구현](https://github.com/hhhuang/CAG)
 - [Cache-Augmented Generation (CAG) from Scratch](https://medium.com/@sabaybiometzger/cache-augmented-generation-cag-from-scratch-441adf71c6a3)
 - [RAG 대신 CAG? 캐시 증강 생성 기술이 차세대 LLM을 바꾼다](https://digitalbourgeois.tistory.com/716)
+- [IBM Developer Guide](https://developer.ibm.com/articles/awb-llms-cache-augmented-generation/)
+- [IBM Cache-Augmented-Generation-Granite](https://github.com/IBM/Cache-Augmented-Generation-Granite)
+- [streamlit CAG chatbot](https://github.com/Saurabh24k/CAG-LLM)
