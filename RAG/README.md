@@ -1,3 +1,5 @@
+# Retrieve-Augmented Generation (RAG)
+
 ![rag overall](../src/imgs/rag.png)
 (https://github.com/langchain-ai/rag-from-scratch)
 
