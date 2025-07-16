@@ -1,5 +1,7 @@
 # Cache-Augmented Generation (CAG) Template
 
+![cag](../src/imgs/cag.png)
+
 이 디렉토리에는 LangChain 프로젝트에서 **하이브리드 캐싱 접근법**을 사용하여 Cache-Augmented Generation (CAG)을 구현하는 재사용 가능한 템플릿이 포함되어 있습니다.
 
 기본적인 CAG 방식은 대형 언어 모델의 확장된 컨텍스트 윈도우를 활용하여 모든 관련 문서를 사전에 로드하고, 런타임 매개변수(Key-Value 캐시)를 미리 계산하여 저장하는 방식입니다.
