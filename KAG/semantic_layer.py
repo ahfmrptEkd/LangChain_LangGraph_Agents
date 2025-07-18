@@ -133,7 +133,7 @@ def create_workflow(graph: Neo4jGraph):
     workflow = StateGraph(MessagesState)
     
     workflow.add_node("assistant", assistant)
-    workflow.add_node("tool", ToolNode(tools))
+    workflow.add_node("tools", ToolNode(tools))
     
     workflow.add_edge(START, "assistant")
     workflow.add_conditional_edges(
@@ -143,7 +143,7 @@ def create_workflow(graph: Neo4jGraph):
         # If the latest message (result) from assistant is a not a tool call -> tools_condition routes to END
         tools_condition,
     )
-    workflow.add_edge("tool", "assistant")
+    workflow.add_edge("tools", "assistant")
     
     return workflow.compile()
 
