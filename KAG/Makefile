@@ -1,4 +1,4 @@
-.PHONY: help start stop status logs clean install
+.PHONY: help start stop status logs clean
 
 # 기본 타겟
 help: ## 사용 가능한 명령어를 보여줍니다
@@ -29,20 +29,9 @@ logs: ## Neo4j 로그를 확인
 	@echo "📋 Neo4j 로그:"
 	docker-compose logs neo4j
 
-install: ## Python 의존성을 설치
-	@echo "📦 Python 의존성을 설치합니다..."
-	@if [ -f "requirements.txt" ]; then \
-		pip install -r requirements.txt; \
-	else \
-		echo "❌ requirements.txt 파일이 없습니다."; \
-	fi
-
 clean: ## 모든 컨테이너와 볼륨을 삭제
 	@echo "🧹 모든 Neo4j 데이터를 삭제합니다..."
 	docker-compose down -v
 	@echo "✅ 모든 데이터가 삭제되었습니다."
 
 restart: stop start ## Neo4j를 재시작
-
-# 개발용 명령어
-dev: install start test ## 개발 환경을 설정 (설치 + 시작 + 테스트) 
