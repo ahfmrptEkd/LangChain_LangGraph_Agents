@@ -1,25 +1,24 @@
 from langchain_neo4j import Neo4jGraph
 from dotenv import load_dotenv
-import os
 
-from typing import Optional, Type
+from typing import Type
 
 from pydantic import BaseModel, Field
 from langchain_core.tools import BaseTool
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 from langgraph.graph import MessagesState
-from langgraph.graph import END, START, StateGraph
+from langgraph.graph import START, StateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
 
 load_dotenv()
 
 def initialize_graph():
     """
-    Neo4j 그래프 데이터베이스 초기화 및 영화 데이터 로드
+    Neo4j graph database initialization and loading movie data
     
     Returns:
-        Neo4jGraph: 초기화된 Neo4j 그래프 객체
+        Neo4jGraph: Initialized Neo4j graph object
     """
     graph = Neo4jGraph(refresh_schema=False)
     
@@ -47,14 +46,14 @@ def initialize_graph():
 
 def get_information(entity: str, graph: Neo4jGraph) -> str:
     """
-    영화 또는 인물에 대한 정보를 Neo4j 그래프에서 검색
+    Search for information about movies or people in the Neo4j graph
     
     Args:
-        entity (str): 검색할 영화 또는 인물 이름
-        graph (Neo4jGraph): Neo4j 그래프 객체
+        entity (str): The name of the movie or person to search for
+        graph (Neo4jGraph): Neo4j graph object
         
     Returns:
-        str: 검색된 정보 또는 "No information was found"
+        str: The found information or "No information was found"
     """
     description_query = """
     MATCH (m:Movie|Person)
@@ -76,14 +75,14 @@ def get_information(entity: str, graph: Neo4jGraph) -> str:
         return "No information was found"
 
 class InformationInput(BaseModel):
-    """정보 검색 도구의 입력 스키마"""
+    """Input schema for the information search tool"""
     entity: str = Field(description="movie or a person mentioned in the question")
 
 class InformationTool(BaseTool):
     """
-    영화 및 인물 정보를 검색하는 도구 클래스
+    Tool class for searching for information about movies and people
     
-    이 도구는 Neo4j 그래프 데이터베이스에서 영화나 인물에 대한 정보를 검색합니다.
+    This tool searches for information about movies or people in the Neo4j graph database.
     """
     name: str = "information"
     description: str = ("useful for when you need to answer questions about various actors or movies")
@@ -91,12 +90,6 @@ class InformationTool(BaseTool):
     graph: Neo4jGraph
 
     def __init__(self, graph: Neo4jGraph):
-        """
-        정보 검색 도구 초기화
-        
-        Args:
-            graph (Neo4jGraph): Neo4j 그래프 객체
-        """
         super().__init__(graph=graph)
 
     def _run(self, entity: str) -> str:
@@ -109,13 +102,13 @@ class InformationTool(BaseTool):
 
 def create_workflow(graph: Neo4jGraph):
     """
-    영화 정보 검색을 위한 워크플로우 생성
+    Create a workflow for searching for movie information
     
     Args:
-        graph (Neo4jGraph): Neo4j 그래프 객체
+        graph (Neo4jGraph): Neo4j graph object
         
     Returns:
-        StateGraph: 컴파일된 워크플로우 그래프
+        StateGraph: Compiled workflow graph
     """
     llm = ChatOpenAI(model="gpt-4o-mini")
     
@@ -127,7 +120,7 @@ def create_workflow(graph: Neo4jGraph):
     )
     
     def assistant(state: MessagesState):
-        """어시스턴트 노드 함수"""
+        """Assistant node function"""
         return {"messages": [llm_with_tools.invoke([system_message] + state["messages"])]}
     
     workflow = StateGraph(MessagesState)
