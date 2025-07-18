@@ -100,6 +100,9 @@ class InformationTool(BaseTool):
         """Use the tool asynchronously."""
         return self._run(entity)
 
+# TODO: recommend tool 만들기. (1. 같은 장르, 고평점 영화 추천, 2. 특정 배우의 다른 영화 (장르) 추천, 3. 사용자가 좋아한 영화 기반 추천)
+
+
 def create_workflow(graph: Neo4jGraph):
     """
     Create a workflow for searching for movie information
