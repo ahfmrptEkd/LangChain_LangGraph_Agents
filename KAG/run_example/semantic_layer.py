@@ -1,5 +1,6 @@
 from langchain_neo4j import Neo4jGraph
 from dotenv import load_dotenv
+import os
 
 from typing import Type
 
@@ -11,7 +12,7 @@ from langgraph.graph import MessagesState
 from langgraph.graph import START, StateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
 
-load_dotenv()
+load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 def initialize_graph():
     """
