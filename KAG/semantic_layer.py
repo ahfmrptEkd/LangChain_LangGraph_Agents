@@ -152,15 +152,14 @@ def recommend_by_actor(actor_name: str, graph: Neo4jGraph, limit: int = 5) -> st
         str: Recommended movies or "No recommendations found"
     """
     actor_recommendation_query = """
-    MATCH (m:Movie {title: $actor_name})<-[:ACTED_IN]-(actor:Person)
-    MATCH (actor)-[:ACTED_IN]->(rec:Movie)
-    WHERE rec.title <> m.title AND rec.imdbRating IS NOT NULL
-    WITH rec, collect(DISTINCT actor.name) as shared_actors, rec.imdbRating as rating
-    ORDER BY rating DESC, size(shared_actors) DESC
+    MATCH (actor:Person {name: $actor_name})-[:ACTED_IN]->(rec:Movie)
+    WHERE rec.imdbRating IS NOT NULL
+    WITH rec, rec.imdbRating as rating
+    ORDER BY rating DESC
     RETURN "Title: " + rec.title + 
            "\nYear: " + coalesce(toString(rec.released), "N/A") +
            "\nRating: " + toString(rating) +
-           "\nShared Actors: " + reduce(s="", a in shared_actors | s + a + ", ") +
+           "\nActor: " + $actor_name +
            "\n---" as recommendation
     LIMIT $limit
     """
@@ -189,44 +188,19 @@ def recommend_personalized(liked_movies: list, graph: Neo4jGraph, limit: int = 5
         str: Personalized recommendations or "No recommendations found"
     """
     personalized_query = """
-    // Get genres and actors from liked movies
     MATCH (liked:Movie)
     WHERE liked.title IN $liked_movies
     
-    // Collect preferred genres
-    OPTIONAL MATCH (liked)-[:IN_GENRE]->(g:Genre)
-    WITH collect(DISTINCT g.name) as preferred_genres, liked
+    MATCH (liked)-[:IN_GENRE]->(g:Genre)<-[:IN_GENRE]-(rec:Movie)
+    WHERE NOT rec.title IN $liked_movies AND rec.imdbRating IS NOT NULL
     
-    // Collect preferred actors
-    OPTIONAL MATCH (liked)<-[:ACTED_IN]-(a:Person)
-    WITH preferred_genres, collect(DISTINCT a.name) as preferred_actors, collect(DISTINCT liked.title) as liked_titles
-    
-    // Find recommendations based on preferences
-    MATCH (rec:Movie)
-    WHERE NOT rec.title IN liked_titles AND rec.imdbRating IS NOT NULL
-    
-    // Calculate genre score
-    OPTIONAL MATCH (rec)-[:IN_GENRE]->(rg:Genre)
-    WHERE rg.name IN preferred_genres
-    WITH rec, preferred_actors, liked_titles, count(DISTINCT rg) as genre_score
-    
-    // Calculate actor score
-    OPTIONAL MATCH (rec)<-[:ACTED_IN]-(ra:Person)
-    WHERE ra.name IN preferred_actors
-    WITH rec, genre_score, count(DISTINCT ra) as actor_score, rec.imdbRating as rating
-    
-    // Calculate total recommendation score
-    WITH rec, 
-         (genre_score * 2 + actor_score * 3 + rating) as rec_score,
-         genre_score, actor_score, rating
-    WHERE genre_score > 0 OR actor_score > 0
-    
-    ORDER BY rec_score DESC, rating DESC
+    WITH rec, count(DISTINCT g) as shared_genres, rec.imdbRating as rating
+    ORDER BY shared_genres DESC, rating DESC
     
     RETURN "Title: " + rec.title + 
            "\nYear: " + coalesce(toString(rec.released), "N/A") +
            "\nRating: " + toString(rating) +
-           "\nRecommendation Score: " + toString(round(rec_score * 100) / 100) +
+           "\nShared Genres: " + toString(shared_genres) +
            "\n---" as recommendation
     LIMIT $limit
     """
@@ -365,9 +339,9 @@ def main():
     react_graph = create_workflow(graph)
     
     input_questions = [
-        # "Who played in the Casino?",
-        # "Recommend same genre movies as Toy Story",
-        "Recommend movies with Tom Hanks",
+        "Who played in the Casino?",
+        "Recommend same genre movies as Toy Story",
+        "Recommend movies with Tom Hanks", 
         "What movies would you recommend to someone who likes Father of the Bride Part II, Grumpier Old Men, and Waiting to Exhale?"
     ]
 
