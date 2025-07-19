@@ -515,7 +515,6 @@ def create_workflow(graph: Neo4jGraph):
         },
     ]
 
-    # 예제 선택기 생성
     example_selector = SemanticSimilarityExampleSelector.from_examples(
         EXAMPLES, OpenAIEmbeddings(), Neo4jVector, k=5, input_keys=["question"]
     )
@@ -582,17 +581,25 @@ def create_workflow(graph: Neo4jGraph):
 
 def main():
     """
-    메인 함수: 그래프를 초기화하고 워크플로우를 실행하는 함수
+    메인 함수- 영화 정보 검색 시스템을 실행
+
+    이 함수는 다음과 같은 작업을 수행합니다:
+    1. Neo4j 그래프 데이터베이스 초기화
+    2. 워크플로우 생성
+    2-1. 가드라일 체크
+    2-2. 쿼리 생성 (Text2Cypher)
+    2-3. 쿼리 검증
+    2-4. 쿼리 수정
+    2-5. 쿼리 실행
+    2-6. 결과 생성
+    3. 예제 질의 처리 및 결과 출력
     """
     try:
-        # 그래프 초기화
         _ = initialize_graph()
         enhanced_graph = Neo4jGraph(enhanced_schema=True)
 
-        # 워크플로우 생성
         cypher_agent = create_workflow(enhanced_graph)
 
-        # 예제 질문들
         example_questions = [
             {"question": "What's the weather in Korea?"},
             {"question": "What was the cast of the Casino?"}
