@@ -62,3 +62,4 @@
 -   **/src**: 이미지 등 프로젝트에 사용되는 소스 파일들을 포함합니다.
 -   **/CAG**: RAG를 기반으로, cache-augmented generation을 구현한 코드와 상세한 `README.md` 문서가 포함되어 있습니다.
 -   **/KAG**: RAG를 기반으로, knowledge-augmented generation을 graph database(Neo4j)를 이용하여 구현한 코드와 상세한 `README.md` 문서가 포함되어 있습니다.
+-   **/doc**: 랭체인을 공부하며 배웠던 부분들을 문서로 작성하고 정리한 폴더입니다.
