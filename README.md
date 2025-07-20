@@ -32,6 +32,9 @@
 
 ### 4. CAG (Cache-Augmented Generation) 구현
 
+![cag](./src/imgs/cag2.svg)
+(Source:https://papooo-dev.github.io/posts/cag-openai/)
+
 **캐시 증강 생성** (`CAG/` 디렉토리): 하이브리드 캐싱 전략을 통해 **빠른 응답 속도**와 **성능 개선**을 달성하는 캐싱 기법들을 구현합니다.
 -   **리트리버 캐시**: 문서 검색 결과 캐싱으로 성능 개선
 -   **LLM 캐시**: 언어 모델 호출 결과 캐싱으로 성능 개선
@@ -39,6 +42,9 @@
 -   **True CAG**: 전체 컨텍스트 사전 로드를 통한 40x 성능 향상 (대규모 데이터셋)
 
 ### 5. KAG (Knowledge-Augmented Generation) 구현
+
+![kag](./src/imgs/kag.jpg)
+(Source:https://papooo-dev.github.io/posts/CAG_vs_KAG/)
 
 **지식 증강 생성** (`KAG/` 디렉토리): **Neo4j 그래프 데이터베이스**를 활용하여 구조화된 지식 그래프 기반의 정확한 관계 추론과 복잡한 질의 처리가 가능한 시스템을 구현합니다.
 -   **Dynamic Cypher**: 자연어 → Cypher 쿼리 자동 변환 시스템

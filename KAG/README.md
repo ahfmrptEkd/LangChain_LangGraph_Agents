@@ -1,9 +1,5 @@
 # Knowledge-Augmented Generation (KAG)
 
-![kag](../src/imgs/kag.jpg)
-(Graph database image)
-<br><br>
-
 이 디렉토리에는 **Neo4j 그래프 데이터베이스**를 활용한 Knowledge-Augmented Generation (KAG) 시스템의 실제 구현 예제가 포함되어 있다.
 
 ![kag overview](../src/imgs/kag2.png)
