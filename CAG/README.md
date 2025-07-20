@@ -1,4 +1,4 @@
-# Cache-Augmented Generation (CAG) Template
+# Cache-Augmented Generation (CAG)
 
 ![cag](../src/imgs/cag.png)
 
