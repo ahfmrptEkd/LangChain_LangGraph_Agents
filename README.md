@@ -1,4 +1,4 @@
-# LangChain Advanced RAG and Study Projects
+# LangChain and LangGraph Study Projects
 
 이 저장소는 LangChain을 사용하여 고급 RAG(Retrieval-Augmented Generation) 기법을 구현하고, 관련 기술들을 학습하기 위한 개인 연구 공간입니다. 표준적인 RAG를 넘어, 더 정확하고 신뢰성 높은 LLM 애플리케이션을 구축하기 위한 다양한 방법론을 직접 코드로 구현하고 실험하는 것을 목표로 합니다.
 
