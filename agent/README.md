@@ -47,15 +47,6 @@ agent/
 ├── classification.py              # 텍스트 분류 (Basic/Enum/Literal 방법)
 ├── summarization.py               # 문서 요약 (맵-리듀스 패턴)
 ├── extraction.py                  # 구조화된 데이터 추출
-│
-├── # 📖 가이드 문서
-├── CustomToolsGuide.md            # 커스텀 도구 작성 가이드
-├── LangGraphStateGuide.md         # LangGraph 상태 관리 가이드
-├── AgentArchitecture.md           # 에이전트 아키텍처 상세 가이드
-├── ConversationalMemory.md        # 대화 메모리 구현 가이드
-├── ChainVSAgent.md                # 체인 vs 에이전트 비교 분석
-├── LangChain_Extraction_Guide.md  # 정보 추출 상세 가이드
-└── async_parallel_processing.md   # 비동기 병렬 처리 가이드
 ```
 
 ---
