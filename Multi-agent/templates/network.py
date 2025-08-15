@@ -38,7 +38,7 @@ from langgraph.graph import MessagesState
 from langgraph.types import Command
 from langchain_openai import ChatOpenAI
 
-from .base import GraphSpec, make_simple_messages_graph, append_ai_message
+from base import GraphSpec, make_simple_messages_graph, append_ai_message
 
 
 model = ChatOpenAI()

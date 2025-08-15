@@ -42,7 +42,7 @@ from langchain_core.tools import tool
 from langgraph.prebuilt import create_react_agent, InjectedState
 from langchain_openai import ChatOpenAI
 
-from .base import GraphSpec
+from base import GraphSpec
 
 
 model = ChatOpenAI()

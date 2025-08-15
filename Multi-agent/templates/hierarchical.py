@@ -50,7 +50,7 @@ from langgraph.graph import StateGraph, MessagesState, START
 from langgraph.types import Command
 from langchain_openai import ChatOpenAI
 
-from .base import GraphSpec, append_ai_message
+from base import GraphSpec, append_ai_message
 
 
 model = ChatOpenAI()

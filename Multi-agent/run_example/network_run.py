@@ -6,7 +6,9 @@ Usage:
 
 import sys
 from pathlib import Path
+from dotenv import load_dotenv
 
+load_dotenv(Path(__file__).parents[1] / ".env")
 # Allow importing modules from the templates directory despite hyphen in parent path
 TEMPLATES_DIR = Path(__file__).resolve().parents[1] / "templates"
 sys.path.insert(0, str(TEMPLATES_DIR))
