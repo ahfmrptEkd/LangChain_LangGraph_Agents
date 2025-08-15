@@ -1,7 +1,33 @@
-"""Network architecture template (many-to-many agents).
+"""Network architecture template for distributed multi-agent collaboration.
 
-Provides a minimal reusable scaffold with three agents: researcher, writer, reviewer.
-Replace model calls with your own LLM/tool logic.
+This module implements a network (many-to-many) pattern where agents can directly
+communicate and route to each other without a central coordinator. Each agent
+makes autonomous decisions about which agent to call next based on the current
+conversation context.
+
+The pattern is ideal for:
+- Collaborative workflows where agents need peer-to-peer communication
+- Scenarios requiring dynamic, context-driven routing
+- Teams where agents have overlapping capabilities
+
+Example:
+    Basic usage::
+
+        from templates import network
+        
+        # Build and compile the graph
+        graph = network.build_graph().compile()
+        
+        # Run with user input
+        result = graph.invoke({"messages": [{"role": "user", "content": "Research AI trends"}]})
+        
+        # Or use the convenience function
+        result = network.run("Research AI trends")
+
+Agents:
+    researcher_agent: Handles research and data gathering tasks.
+    writer_agent: Creates drafts and written content.
+    reviewer_agent: Reviews and provides feedback on content.
 """
 
 from __future__ import annotations
@@ -127,8 +153,9 @@ def run(text: str) -> Mapping[str, Any]:
     Returns:
         Final state after invocation.
     """
+    from langchain_core.messages import HumanMessage
 
     graph = build_graph().compile()
-    return graph.invoke({"messages": [{"role": "user", "content": text}]})
+    return graph.invoke({"messages": [HumanMessage(content=text)]})
 
 

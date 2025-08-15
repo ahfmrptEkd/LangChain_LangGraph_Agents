@@ -1,6 +1,37 @@
-"""Tool-calling supervisor template.
+"""Tool-calling supervisor template using ReAct pattern.
 
-Supervisor is a ReAct-style agent that calls specialist tools.
+This module implements a tool-calling supervisor that uses LangGraph's prebuilt
+ReAct agent to coordinate specialist agents as tools. Unlike traditional routing,
+the supervisor can call multiple tools in sequence, pass parameters, and reason
+about tool outputs before making the next decision.
+
+The pattern is ideal for:
+- Complex reasoning workflows requiring tool chaining
+- Scenarios where the supervisor needs to pass specific parameters to agents
+- Dynamic workflows where tool selection depends on previous outputs
+- ReAct-style reasoning (Reason + Act) with specialist capabilities
+
+Example:
+    Basic usage::
+
+        from templates import supervisor_tool
+        
+        # Build and compile the graph (uses prebuilt ReAct agent)
+        graph = supervisor_tool.build_graph().compile()
+        
+        # Run with user input
+        result = graph.invoke({"messages": [{"role": "user", "content": "Research AI trends and write a summary"}]})
+        
+        # Or use the convenience function
+        result = supervisor_tool.run("Research AI trends and write a summary")
+
+Tools:
+    research_agent: Research specialist tool with query parameter.
+    writing_agent: Writing specialist tool with content and style parameters.
+    review_agent: Review specialist tool with content and criteria parameters.
+
+Note:
+    Uses LangGraph's create_react_agent for built-in reasoning and tool execution.
 """
 
 from __future__ import annotations
@@ -80,7 +111,17 @@ def build_graph() -> GraphSpec:
 
 
 def run(text: str) -> Mapping[str, Any]:
+    """Quick helper to run the compiled tool-calling supervisor graph with user input.
+
+    Args:
+        text: User prompt.
+
+    Returns:
+        Final state after invocation.
+    """
+    from langchain_core.messages import HumanMessage
+
     graph = build_graph().compile()
-    return graph.invoke({"messages": [{"role": "user", "content": text}]})
+    return graph.invoke({"messages": [HumanMessage(content=text)]})
 
 

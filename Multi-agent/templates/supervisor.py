@@ -1,6 +1,35 @@
-"""Supervisor architecture template (central router).
+"""Supervisor architecture template for centralized agent coordination.
 
-Supervisor decides which specialist to call next based on the latest message.
+This module implements a supervisor pattern where a central coordinator (supervisor)
+analyzes incoming messages and routes them to appropriate specialist agents. All
+agents return control to the supervisor after completing their tasks, creating
+a hub-and-spoke architecture.
+
+The pattern is ideal for:
+- Clear task delegation with centralized decision-making
+- Scenarios where you need consistent routing logic
+- Teams with distinct specialist roles that don't overlap
+- Workflows requiring centralized state management
+
+Example:
+    Basic usage::
+
+        from templates import supervisor
+        
+        # Build and compile the graph
+        graph = supervisor.build_graph().compile()
+        
+        # Run with user input
+        result = graph.invoke({"messages": [{"role": "user", "content": "Write a research report"}]})
+        
+        # Or use the convenience function
+        result = supervisor.run("Write a research report")
+
+Architecture:
+    supervisor: Central router that analyzes requests and delegates to specialists.
+    research_agent: Handles research and data gathering tasks.
+    writing_agent: Creates drafts and written content.
+    review_agent: Reviews and provides feedback on content.
 """
 
 from __future__ import annotations
@@ -47,6 +76,14 @@ def supervisor(state: MessagesState) -> Command[Literal["research_agent", "writi
 
 
 def research_agent(state: MessagesState) -> Command[Literal["supervisor"]]:
+    """Research specialist agent.
+
+    Args:
+        state: Messages-based state containing conversation history.
+
+    Returns:
+        Command to return to supervisor with research results.
+    """
     last = state["messages"][-1]
     response = model.invoke([
         {"role": "system", "content": "You are a research specialist."},
@@ -56,6 +93,14 @@ def research_agent(state: MessagesState) -> Command[Literal["supervisor"]]:
 
 
 def writing_agent(state: MessagesState) -> Command[Literal["supervisor"]]:
+    """Writing specialist agent.
+
+    Args:
+        state: Messages-based state containing conversation history.
+
+    Returns:
+        Command to return to supervisor with written content.
+    """
     last = state["messages"][-1]
     response = model.invoke([
         {"role": "system", "content": "You are a writing specialist."},
@@ -65,6 +110,14 @@ def writing_agent(state: MessagesState) -> Command[Literal["supervisor"]]:
 
 
 def review_agent(state: MessagesState) -> Command[Literal["supervisor"]]:
+    """Review specialist agent.
+
+    Args:
+        state: Messages-based state containing conversation history.
+
+    Returns:
+        Command to return to supervisor with review feedback.
+    """
     last = state["messages"][-1]
     response = model.invoke([
         {"role": "system", "content": "You are a review specialist."},
@@ -93,7 +146,17 @@ def build_graph() -> GraphSpec:
 
 
 def run(text: str) -> Mapping[str, Any]:
+    """Quick helper to run the compiled supervisor graph with user input.
+
+    Args:
+        text: User prompt.
+
+    Returns:
+        Final state after invocation.
+    """
+    from langchain_core.messages import HumanMessage
+
     graph = build_graph().compile()
-    return graph.invoke({"messages": [{"role": "user", "content": text}]})
+    return graph.invoke({"messages": [HumanMessage(content=text)]})
 
 

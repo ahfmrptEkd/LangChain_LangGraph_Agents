@@ -1,7 +1,45 @@
-"""Hierarchical architecture template (teams with supervisors).
+"""Hierarchical architecture template for nested team coordination.
 
-Top-level supervisor delegates to team subgraphs (research team, content team).
-Each team has its own internal supervisor and specialists.
+This module implements a hierarchical pattern with multiple levels of supervision.
+A top-level supervisor delegates work to specialized teams (subgraphs), where each
+team has its own internal supervisor managing specialist agents. This creates a
+tree-like organizational structure with clear chains of command.
+
+The pattern is ideal for:
+- Large-scale workflows requiring multiple specialized teams
+- Complex projects with distinct phases handled by different teams
+- Scenarios where teams need internal coordination but also inter-team collaboration
+- Organizations with clear hierarchical structures and responsibilities
+
+Example:
+    Basic usage::
+
+        from templates import hierarchical
+        
+        # Build and compile the graph
+        graph = hierarchical.build_graph().compile()
+        
+        # Run with user input
+        result = graph.invoke({"messages": [HumanMessage(content="Research AI papers and write technical docs")]})
+        
+        # Or use the convenience function
+        result = hierarchical.run("Research AI papers and write technical docs")
+
+Architecture:
+    top_level_supervisor: Routes between research and content teams.
+    
+    Research Team:
+        research_supervisor: Manages research specialists.
+        data_researcher: Handles data and statistics research.
+        academic_researcher: Handles literature and academic research.
+    
+    Content Team:
+        content_supervisor: Manages content specialists.
+        copywriter: Creates marketing and general content.
+        technical_writer: Creates technical documentation and guides.
+
+Note:
+    Each team is a compiled subgraph that can be independently tested and reused.
 """
 
 from __future__ import annotations
