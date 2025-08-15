@@ -34,7 +34,7 @@ from __future__ import annotations
 
 from typing import Any, Literal, Mapping
 
-from langgraph.graph import MessagesState
+from langgraph.graph import MessagesState, END
 from langgraph.types import Command
 from langchain_openai import ChatOpenAI
 
@@ -44,7 +44,7 @@ from base import GraphSpec, make_simple_messages_graph, append_ai_message
 model = ChatOpenAI()
 
 
-def researcher_agent(state: MessagesState) -> Command[Literal["writer_agent", "reviewer_agent", "__end__"]]:
+def researcher_agent(state: MessagesState) -> Command:
     """Research-focused agent.
 
     Args:
@@ -66,12 +66,12 @@ def researcher_agent(state: MessagesState) -> Command[Literal["writer_agent", "r
     elif "review" in content.lower():
         nxt = "reviewer_agent"
     else:
-        nxt = "__end__"
+        nxt = END
 
     return Command(goto=nxt, update=append_ai_message(state, content, name="researcher"))
 
 
-def writer_agent(state: MessagesState) -> Command[Literal["researcher_agent", "reviewer_agent", "__end__"]]:
+def writer_agent(state: MessagesState) -> Command:
     """Writing-focused agent.
 
     Args:
@@ -93,12 +93,12 @@ def writer_agent(state: MessagesState) -> Command[Literal["researcher_agent", "r
     elif "review" in content.lower():
         nxt = "reviewer_agent"
     else:
-        nxt = "__end__"
+        nxt = END
 
     return Command(goto=nxt, update=append_ai_message(state, content, name="writer"))
 
 
-def reviewer_agent(state: MessagesState) -> Command[Literal["researcher_agent", "writer_agent", "__end__"]]:
+def reviewer_agent(state: MessagesState) -> Command:
     """Review-focused agent.
 
     Args:
@@ -120,7 +120,7 @@ def reviewer_agent(state: MessagesState) -> Command[Literal["researcher_agent", 
     elif "needs data" in content.lower():
         nxt = "researcher_agent"
     else:
-        nxt = "__end__"
+        nxt = END
 
     return Command(goto=nxt, update=append_ai_message(state, content, name="reviewer"))
 

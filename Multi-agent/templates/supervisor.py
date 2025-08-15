@@ -46,7 +46,7 @@ from base import GraphSpec, append_ai_message
 model = ChatOpenAI()
 
 
-def supervisor(state: MessagesState) -> Command[Literal["research_agent", "writing_agent", "review_agent", "__end__"]]:
+def supervisor(state: MessagesState) -> Command:
     """Central decision-maker.
 
     Args:
@@ -70,7 +70,7 @@ def supervisor(state: MessagesState) -> Command[Literal["research_agent", "writi
     elif any(k in content.lower() for k in ["review", "check"]):
         nxt = "review_agent"
     else:
-        nxt = "__end__"
+        nxt = END
 
     return Command(goto=nxt)
 

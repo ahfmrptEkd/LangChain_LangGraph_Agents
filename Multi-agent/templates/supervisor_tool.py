@@ -36,7 +36,7 @@ Note:
 
 from __future__ import annotations
 
-from typing import Any, Mapping
+from typing import Any, Mapping, Annotated
 
 from langchain_core.tools import tool
 from langgraph.prebuilt import create_react_agent, InjectedState
@@ -49,7 +49,7 @@ model = ChatOpenAI()
 
 
 @tool
-def research_agent(query: str, state: InjectedState) -> str:
+def research_agent(query: str, state: Annotated[dict, InjectedState]) -> str:
     """Research specialist as a tool.
 
     Args:
@@ -68,7 +68,7 @@ def research_agent(query: str, state: InjectedState) -> str:
 
 
 @tool
-def writing_agent(content: str, style: str = "professional", state: InjectedState | None = None) -> str:
+def writing_agent(content: str, style: str = "professional", state: Annotated[dict | None, InjectedState] = None) -> str:
     """Writing specialist as a tool.
 
     Args:
@@ -85,7 +85,7 @@ def writing_agent(content: str, style: str = "professional", state: InjectedStat
 
 
 @tool
-def review_agent(content: str, criteria: str = "accuracy, clarity", state: InjectedState | None = None) -> str:
+def review_agent(content: str, criteria: str = "accuracy, clarity", state: Annotated[dict | None, InjectedState] = None) -> str:
     """Review specialist as a tool.
 
     Args:

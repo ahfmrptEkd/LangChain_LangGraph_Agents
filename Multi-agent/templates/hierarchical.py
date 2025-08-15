@@ -46,7 +46,7 @@ from __future__ import annotations
 
 from typing import Any, Literal, Mapping
 
-from langgraph.graph import StateGraph, MessagesState, START
+from langgraph.graph import StateGraph, MessagesState, START, END
 from langgraph.types import Command
 from langchain_openai import ChatOpenAI
 
@@ -57,14 +57,14 @@ model = ChatOpenAI()
 
 
 # === Research Team ===
-def research_supervisor(state: MessagesState) -> Command[Literal["data_researcher", "academic_researcher", "__end__"]]:
+def research_supervisor(state: MessagesState) -> Command:
     last = state["messages"][-1]
     text = (last.content or "").lower()
     if any(k in text for k in ["data", "stats", "table"]):
         return Command(goto="data_researcher")
     if any(k in text for k in ["paper", "study", "academic"]):
         return Command(goto="academic_researcher")
-    return Command(goto="__end__")
+    return Command(goto=END)
 
 
 def data_researcher(state: MessagesState) -> Command[Literal["research_supervisor"]]:
@@ -95,7 +95,7 @@ def build_research_team():
 
 
 # === Content Team ===
-def content_supervisor(state: MessagesState) -> Command[Literal["copywriter", "technical_writer", "__end__"]]:
+def content_supervisor(state: MessagesState) -> Command:
     last = state["messages"][-1]
     text = (last.content or "").lower()
     if any(k in text for k in ["api", "code", "technical", "how-to"]):
@@ -131,14 +131,14 @@ def build_content_team():
 
 
 # === Top-level ===
-def top_level_supervisor(state: MessagesState) -> Command[Literal["research_team", "content_team", "__end__"]]:
+def top_level_supervisor(state: MessagesState) -> Command:
     last = state["messages"][-1]
     text = (last.content or "").lower()
     if any(k in text for k in ["research", "find", "analyze", "data", "paper", "study"]):
         return Command(goto="research_team")
     if any(k in text for k in ["write", "draft", "content", "copy", "doc", "api"]):
         return Command(goto="content_team")
-    return Command(goto="__end__")
+    return Command(goto=END)
 
 
 def build_graph() -> GraphSpec:
