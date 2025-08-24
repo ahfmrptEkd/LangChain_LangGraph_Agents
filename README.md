@@ -30,14 +30,13 @@
 -   **LLM 기반 NLP 기법**: Text classification, Text extraction, Text summarziation
 -   **상태 관리**: LangGraph 기반 워크플로우
 
-### 6. Multi-Agent 시스템 구현
+### 4. Multi-Agent 시스템 구현
 **멀티 에이전트 아키텍처** (`Multi-agent/` 디렉토리): LangGraph를 활용하여 복잡한 작업을 여러 전문 에이전트가 협력하여 처리하는 시스템을 구현합니다.
 -   **Network 아키텍처**: 동등한 에이전트들의 분산 협력
 -   **Supervisor 아키텍처**: 중앙 집중형 에이전트 조정
 -   **Hierarchical 아키텍처**: 계층적 에이전트 관리
--   **MCP 통합**: Model Context Protocol을 통한 분산 도구 시스템
 
-### 4. CAG (Cache-Augmented Generation) 구현
+### 5. CAG (Cache-Augmented Generation) 구현
 
 ![cag](./src/imgs/cag2.svg)
 (Source:https://papooo-dev.github.io/posts/cag-openai/)
@@ -48,7 +47,7 @@
 -   **시맨틱 캐시**: FAISS 기반 의미적 유사도 캐싱
 -   **True CAG**: 전체 컨텍스트 사전 로드를 통한 40x 성능 향상 (대규모 데이터셋)
 
-### 5. KAG (Knowledge-Augmented Generation) 구현
+### 6. KAG (Knowledge-Augmented Generation) 구현
 
 ![kag](./src/imgs/kag.jpg)
 (Source:https://papooo-dev.github.io/posts/CAG_vs_KAG/)
@@ -75,5 +74,5 @@
 -   **/src**: 이미지 등 프로젝트에 사용되는 소스 파일들을 포함합니다.
 -   **/CAG**: RAG를 기반으로, cache-augmented generation을 구현한 코드와 상세한 `README.md` 문서가 포함되어 있습니다.
 -   **/KAG**: RAG를 기반으로, knowledge-augmented generation을 graph database(Neo4j)를 이용하여 구현한 코드와 상세한 `README.md` 문서가 포함되어 있습니다.
--   **/Multi-agent**: LangGraph를 활용한 다양한 멀티 에이전트 아키텍처 패턴(Network, Supervisor, Hierarchical)과 MCP 통합 구현 코드를 포함합니다.
+-   **/Multi-agent**: LangGraph를 활용한 다양한 멀티 에이전트 아키텍처 패턴(Network, Supervisor, Hierarchical)
 -   **/doc**: 랭체인을 공부하며 배웠던 부분들을 문서로 작성하고 정리한 폴더입니다.
